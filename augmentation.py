@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import albumentations as A
+import random
 
 class RandomDistortion():
     def __init__(self, prob=0.9):
@@ -18,14 +19,14 @@ class RandomDistortion():
                     A.ElasticTransform(
                         p=1, alpha=300, sigma=20, border_mode=cv2.BORDER_CONSTANT),
                     A.GridDistortion(
-                        num_steps=2, distort_limit=0.8, p=1, border_mode=cv2.BORDER_CONSTANT),
+                        num_augteps=2, distort_limit=0.8, p=1, border_mode=cv2.BORDER_CONSTANT),
                     A.OpticalDistortion(p=1, distort_limit=-0.9, shift_limit=1,
                                         border_mode=cv2.BORDER_CONSTANT, always_apply=True),
                     A.Compose([
                         A.OpticalDistortion(
                             p=1, distort_limit=0.5, shift_limit=1, border_mode=cv2.BORDER_CONSTANT, always_apply=True),
                         A.GridDistortion(
-                            num_steps=2, distort_limit=0.3, p=1, border_mode=cv2.BORDER_CONSTANT)
+                            num_augteps=2, distort_limit=0.3, p=1, border_mode=cv2.BORDER_CONSTANT)
                     ], p=1)
                 ], p=1)
             ], p=1)
@@ -82,7 +83,7 @@ class RandomBlur():
             if np.random.rand() < 0.5:
                 crop_rate = [0.2, 0.4]
                 trans = A.MotionBlur(p=1, blur_limit=(
-                    3, 21), allow_shifted=True, always_apply=False)
+                    3, 21), allow_aughifted=True, always_apply=False)
 
                 x = trans(image=new_image, mask=label)
                 blur_map = x['image']
@@ -239,6 +240,24 @@ class RandomScratch():
     def __init__(self, prob=0.9):
         super(RandomScratch, self).__init__()
         self.prob = prob
+        self.iteration = random.randint(1,5)
+    
+    def consecutive_points(self,height,width,x,y,n):
+        d = random.randint(46, 89)  #Direction of the consecutive line
+        direction_rad = np.deg2rad(d)  # Convert degrees to radians
+        dx = np.cos(direction_rad)  # The x-component in the direction
+        dy = np.sin(direction_rad)  # The y-component in the direction
+        x_new = min(max(x, 0), width - 1)
+        y_new = min(max(y, 0), height - 1)
+        # points = [(y_new, x_new)]
+        points = []
+        for i in range(n):
+            x_new = int(x + dx * i)
+            y_new = int(y + dy * i)
+            x_new = min(max(x_new, 0), width - 1)
+            y_new = min(max(y_new, 0), height - 1)
+            points.append((y_new, x_new))
+        return points
 
     def __call__(self, image, label):
         if np.random.rand() < self.prob:
@@ -246,51 +265,57 @@ class RandomScratch():
                 new_image = image[0]
             else:
                 new_image = image
-                
-            times = int(np.random.rand()/0.4)+1
+            base_image = new_image
+            base_label = label
             
-            for t in range(times):
+            for i in range(self.iteration):
+                n = random.randint(20,100)  # Number of consecutive points
+                d = random.randint(45,120)  # Direction
+                l = random.randint(50,200)  # Length of extension
+                height, width = image.shape[:2]
+                x_augtart = random.randint(0, width - n)
+                y_augtart = random.randint(0, height - 1)
 
-                crop_rate_h = [0.01, 0.1]
-                crop_rate_w = [0.2, 0.3]
-                h = new_image.shape[0]
-                w = new_image.shape[1]
-                crop_h = np.random.randint(h*crop_rate_h[0], h*crop_rate_h[1])
-                crop_w = np.random.randint(w*crop_rate_w[0], w*crop_rate_w[1])
+                points = self.consecutive_points(height,width,x_augtart,y_augtart,n)
 
-                h1 = np.random.randint(0, h-crop_h-1)
-                w1 = np.random.randint(0, w-crop_w-1)
+                # Calculate the unit vector of direction d 
+                direction_rad = np.deg2rad(d)  # Convert degrees to radians
+                dx = np.cos(direction_rad)  # The x-component in the direction
+                dy = np.sin(direction_rad)  # The y-component in the direction
 
-                scratch_map = new_image[w1:w1+crop_w, h1:h1 + crop_h]
-                crop_map_ori = new_image[w1:w1+crop_w, h1:h1 + crop_h]
-                scratch_label = label[w1:w1+crop_w, h1:h1 + crop_h]
-                crop_label_ori = label[w1:w1+crop_w, h1:h1 + crop_h]
+                # extend operation
+                extended_points = []
+                for y, x in points:
+                    x_new = int(x + dx * l)
+                    y_new = int(y + dy * l)
+                    x_new = min(max(x_new, 0), width - 1)
+                    y_new = min(max(y_new, 0), height - 1)
+                    extended_points.append((y_new, x_new))
 
-                scratch_map_pad = scratch_map[:, 0]
-                scratch_map_pad = scratch_map_pad[:, np.newaxis]
-                scratch_label_pad = scratch_label[:, 0]
-                scratch_label_pad = scratch_label_pad[:, np.newaxis]
-
-                scratch_map = np.pad(
-                    scratch_map_pad,  ((0, 0), (scratch_map.shape[1]-1, 0)), mode='edge')
-                scratch_label = np.pad(
-                    scratch_label_pad,  ((0, 0), (scratch_label.shape[1]-1, 0)), mode='edge')
-
-                if np.random.rand() < 0.8:
-                    rand_rotate = np.random.randint(15, 45)
-                    M = cv2.getRotationMatrix2D(
-                        (crop_h/2, crop_w/2), rand_rotate, 1.0)
-                    scratch_map = cv2.warpAffine(scratch_map, M, (crop_h, crop_w))
-                    scratch_label = cv2.warpAffine(
-                        scratch_label, M, (crop_h, crop_w))
-                    location = scratch_map == 0
-                    scratch_map[scratch_map == 0] = crop_map_ori[scratch_map == 0]
-                    scratch_label[location] = crop_label_ori[location]
-                new_image[w1:w1+crop_w, h1:h1 + crop_h] = scratch_map
-                label[w1:w1+crop_w, h1:h1 + crop_h] = scratch_label
+        
+                for i in range(len(points)):
+                    x_augtart,y_augtart = points[i]
+                    x,y = extended_points[i]
+                    color = int(base_image[x_augtart,y_augtart])
+                    new_image = cv2.line(new_image, (x_augtart,y_augtart), (x,y), color, 2)
+                    color = int(base_label[x_augtart,y_augtart])
+                    label = cv2.line(base_label, (x_augtart,y_augtart), (x,y), color, 2)
 
             if(len(image.shape)) == 3:
                 image = new_image[np.newaxis, :, :]
             else:
                 image = new_image
         return image, label
+
+from osgeo import gdal
+if __name__ == "__main__":
+    map_path = './map.tif'
+    label_path = './label.tif'
+    map_data = gdal.Open(map_path)
+    label_data = gdal.Open(label_path)
+    map = map_data.ReadAsArray(0,0,map_data.RasterXSize,map_data.RasterYSize)
+    label = label_data.ReadAsArray(0,0,label_data.RasterXSize,label_data.RasterYSize)
+    scratch = RandomScratch(prob=1)
+    map,label = scratch.__call__(map,label)
+    cv2.imwrite('./map_aug.tif',map)
+    cv2.imwrite('./label_aug.tif',label)
