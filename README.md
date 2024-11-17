@@ -17,9 +17,9 @@ We support the weight for our project.
 ### augmentation
 This code is for image augmentation through training, which is based on the albumentation project, but we added more useful new methods.
 
-
+### Other supplementary information
 The input of the model is 1000pixels × 1000pixels × 1 image. The table below lists the input and output sizes corresponding to each stage of the network during feature extraction. 
-![image](https://github.com/user-attachments/assets/d4ad1aa2-71f0-4cee-9343-803d6cdbc4aa)
+![image](https://github.com/user-attachments/assets/c5ffaced-071d-4951-a1a5-94a0d607e286)
 
 
 The figure below is the distribution of different study areas. 
