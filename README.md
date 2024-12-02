@@ -19,7 +19,7 @@ This code is for image augmentation through training, which is based on the albu
 
 ### Other supplementary information
 More segmentation results of historical B&W images:
-![github_more_results1](https://github.com/user-attachments/assets/8eca446a-57f3-4d7f-8052-67f8fbc0b61d)
+![github_more_results1](https://github.com/user-attachments/assets/47465e1d-0c22-49cc-95b2-8e3aa559313d)
 ![github_more_results2](https://github.com/user-attachments/assets/ad9c34a0-23a3-44ce-9b0f-251ff9b3202e)
 
 The input of the model is 1000pixels × 1000pixels × 1 image. The table below lists the input and output sizes corresponding to each stage of the network during feature extraction. 
@@ -39,7 +39,10 @@ The table below is the detailed information on the time required for different m
 
 ![image](https://github.com/user-attachments/assets/723bf18d-83c9-49d6-951b-172a146cc5fd)
 
-The comparison of different luminance enhancer methods:
+The comparison of different image luminance(grayscale) adjustment methods:
+![github_leresults](https://github.com/user-attachments/assets/7745524a-36cc-477c-9f63-fc923bbb1d3b)
+
+Using LE to adjust the luminance of B&W image has a better effect. Compared with other methods, LE has a good enhancement effect in various scenes. In addition, B&WTreeNet also has a good effect on tree cover segmentation of other luminance-adjusted images.
 
 The proposed LE had the best segmentation accuracy.
 If you are interested in our tree mapping products throughout Switzerland 40 years ago, please contact us.
