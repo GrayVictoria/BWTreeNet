@@ -18,6 +18,10 @@ We support the weight for our project.
 This code is for image augmentation through training, which is based on the albumentation project, but we added more useful new methods.
 
 ### Other supplementary information
+More segmentation results of historical B&W images:
+![github_more_results1](https://github.com/user-attachments/assets/8eca446a-57f3-4d7f-8052-67f8fbc0b61d)
+![github_more_results2](https://github.com/user-attachments/assets/ad9c34a0-23a3-44ce-9b0f-251ff9b3202e)
+
 The input of the model is 1000pixels × 1000pixels × 1 image. The table below lists the input and output sizes corresponding to each stage of the network during feature extraction. 
 ![image](https://github.com/user-attachments/assets/c5ffaced-071d-4951-a1a5-94a0d607e286)
 
@@ -35,4 +39,8 @@ The table below is the detailed information on the time required for different m
 
 ![image](https://github.com/user-attachments/assets/723bf18d-83c9-49d6-951b-172a146cc5fd)
 
+The comparison of different luminance enhancer methods:
+
+The proposed LE had the best segmentation accuracy.
 If you are interested in our tree mapping products throughout Switzerland 40 years ago, please contact us.
+The tree mapping products of Switzerland 80 years ago is ready too, if you want to give some advice, please contact us.
