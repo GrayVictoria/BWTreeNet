@@ -11,7 +11,8 @@ Besides, if you want to train the B&WTreeNet, just use the model file in /GuiTes
 And if you want to get the weight, please contact us.
 
 ### Luminance Enhancer
-This project is  used for changing the luminance distribution for the B&W images.
+This project is used for changing the luminance distribution for the B&W images.
+
 We support the weight for our project.
 
 ### augmentation
@@ -42,8 +43,6 @@ The table below is the detailed information on the time required for different m
 The comparison of different image luminance(grayscale) adjustment methods:
 ![github_leresults](https://github.com/user-attachments/assets/7745524a-36cc-477c-9f63-fc923bbb1d3b)
 
-Using LE to adjust the luminance of B&W image has a better effect. Compared with other methods, LE has a good enhancement effect in various scenes. In addition, B&WTreeNet also has a good effect on tree cover segmentation of other luminance-adjusted images.
+Using LE to adjust the luminance of B&W image has a better effect. Compared with other methods, LE has a good enhancement effect in various scenes. In addition, B&WTreeNet also has a good effect on tree cover segmentation of other luminance-adjusted images, and the proposed LE has the best segmentation accuracy.
 
-The proposed LE had the best segmentation accuracy.
-If you are interested in our tree mapping products throughout Switzerland 40 years ago, please contact us.
-The tree mapping products of Switzerland 80 years ago is ready too, if you want to give some advice, please contact us.
+If you are interested in our tree mapping products throughout Switzerland 40 years ago and 80 years ago, please contact us.
