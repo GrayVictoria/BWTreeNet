@@ -41,11 +41,9 @@ class mainClass(object):
             images = patch_list[i]
             pred_result =[]
             if flip_strategy:
-                #翻转n次后表决
                 image_data = images[0]
                 image_flip1 = np.flip(image_data,axis=0)[np.newaxis,:,:]
                 image_flip2 = np.flip(image_data,axis=1)[np.newaxis,:,:]
-                #顺时针90度
                 image_flip3 = image_data
                 image_flip3 = image_flip3[::-1].T[np.newaxis,:,:]
                 image_flip4 = image_data
@@ -170,7 +168,7 @@ class mainClass(object):
         return 1
 
     def load_model(self,model_name,model_path):
-        print('导入模型......',model_name)
+        print('Load model......',model_name)
         model = eval(self.model_name)(n_class=self.classnum)
         if self.gpu >= 0:
             model.cuda(self.gpu)
@@ -180,7 +178,7 @@ class mainClass(object):
     
     def create_result_img(self,source_path,target_path):
         if not os.path.exists(source_path):
-            print('源文件不存在')
+            print('no file')
         img = gdal.Open(source_path)
         tiffwid = img.RasterXSize
         tiffhei = img.RasterYSize
@@ -192,7 +190,7 @@ class mainClass(object):
         tiff_geotransform = img.GetGeoTransform()
         tiff_proj = img.GetProjection()
         if tiffwid == 0:
-            print("读取tif文件失败，请检查输入")
+            print("read fail")
             return False
         exist_file = os.path.exists(target_path)
         if exist_file == True:
@@ -209,7 +207,7 @@ class mainClass(object):
             dataset.SetGeoTransform(result_tiff_geotransform)
             dataset.SetProjection(tiff_proj)
         else:
-            print('生成结果文件失败，请检查文件名称')
+            print('generate fail')
             return False
         return img,dataset
     
@@ -244,7 +242,7 @@ class mainClass(object):
         return result_img
     
     def test_WFV_img(self, source_path, target_path):
-        print('执行程序......')
+        print('testing......')
         
         time_start = time.time()
         
@@ -255,7 +253,7 @@ class mainClass(object):
         result_img = self.predict_WFV_process(test_img,result_img,model)
         
         time_end = time.time()
-        print('本次检测时间： ',str('%.2f'%(time_end-time_start)),' s')
+        print('process time： ',str('%.2f'%(time_end-time_start)),' s')
 
         del result_img
 
